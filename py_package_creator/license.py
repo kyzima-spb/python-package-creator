@@ -7,6 +7,11 @@ from requests import get as open_url
 from py_package_creator.decorators import cached
 
 
+def get_license(lid):
+    """Возвращает объект, описывающий лицензию."""
+    return load_licenses().get(lid)
+
+
 @cached('classifiers.pickle')
 def load_allowed_classifiers():
     """Возвращает список разрешенных PyPi классификаторов, описывающих лицензию."""
@@ -28,7 +33,7 @@ def load_licenses():
                 clf = identifier.get('identifier')
                 return clf in classifiers
 
-    return list(filter(cb, licenses.all()))
+    return {l.id: l for l in filter(cb, licenses.all())}
 
 
 class LicenseCompleter(Completer):
@@ -38,7 +43,7 @@ class LicenseCompleter(Completer):
         self.__licenses = load_licenses()
 
     def __get_matches(self, qs):
-        for license in self.__licenses:
+        for license in self.__licenses.values():
             lid = license.id.lower()
             name = license.name.lower()
 
