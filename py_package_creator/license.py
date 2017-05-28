@@ -1,6 +1,7 @@
 # coding: utf-8
 
 from opensource import licenses
+from prompt_toolkit.completion import Completer, Completion
 from requests import get as open_url
 
 from py_package_creator.decorators import cached
@@ -28,3 +29,25 @@ def load_licenses():
                 return clf in classifiers
 
     return list(filter(cb, licenses.all()))
+
+
+class LicenseCompleter(Completer):
+    """Автодополнение для полей ввода."""
+
+    def __init__(self):
+        self.__licenses = load_licenses()
+
+    def __get_matches(self, qs):
+        for license in self.__licenses:
+            lid = license.id.lower()
+            name = license.name.lower()
+
+            if lid.find(qs) != -1 or name.find(qs) != -1:
+                yield license
+
+    def get_completions(self, document, complete_event):
+        word_before_cursor = document.text_before_cursor.lower()
+        matches = self.__get_matches(word_before_cursor)
+
+        for license in matches:
+            yield Completion(license.name, -len(word_before_cursor))
