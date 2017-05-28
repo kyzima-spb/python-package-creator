@@ -68,7 +68,7 @@ class Prompt(Input):
     def __init__(self, message, default='', validator=None, **kwargs):
         assert isinstance(default, str)
 
-        super().__init__(message, default)
+        super(Prompt, self).__init__(message, default)
 
         self.__validator = validator
         self.kwargs = kwargs
@@ -94,7 +94,7 @@ class Prompt(Input):
         return kwargs
 
     def _get_prompt_tokens(self, cli=None):
-        tokens = super()._get_prompt_tokens(cli)
+        tokens = super(Prompt, self)._get_prompt_tokens(cli)
 
         dflt = self.get_default()
 
@@ -124,10 +124,10 @@ class Prompt(Input):
 class Confirm(Input):
     def __init__(self, message, default=True):
         assert isinstance(default, bool)
-        super().__init__(message, default)
+        super(Confirm, self).__init__(message, default)
 
     def _get_prompt_tokens(self, cli=None):
-        tokens = super()._get_prompt_tokens(cli)
+        tokens = super(Confirm, self)._get_prompt_tokens(cli)
 
         dflt = 'Y/n' if self.get_default() else 'y/N'
         tokens.insert(1, (Token.Default, ' ({})'.format(dflt)))
