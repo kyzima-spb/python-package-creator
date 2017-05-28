@@ -50,4 +50,6 @@ class LicenseCompleter(Completer):
         matches = self.__get_matches(word_before_cursor)
 
         for license in matches:
-            yield Completion(license.name, -len(word_before_cursor))
+            yield Completion(license.id,
+                             start_position=-len(word_before_cursor),
+                             display=license.name)
