@@ -6,6 +6,7 @@
 
 from abc import ABCMeta, abstractmethod
 
+from six import with_metaclass
 from prompt_toolkit.shortcuts import prompt, print_tokens, create_confirm_application, run_application
 from prompt_toolkit.enums import DEFAULT_BUFFER
 from prompt_toolkit.filters import Condition
@@ -17,7 +18,7 @@ from pygments.token import Token
 from .validators import ChainValidator
 
 
-class Input(metaclass=ABCMeta):
+class Input(with_metaclass(ABCMeta, object)):
     """Базовый элемент ввода."""
 
     def __init__(self, message, default=None):
