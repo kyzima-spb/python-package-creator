@@ -17,7 +17,13 @@ class Property(with_metaclass(ABCMeta, object)):
     Класс для получения значения свойства пакета.
     """
 
-    __slots__ = '_default'
+    __slots__ = '_default', '_value'
+
+    def __init__(self):
+        self._value = None
+
+    def __str__(self):
+        return Stringify.string(self)
 
     def _get_default(self):
         """Возвращает не кешированное значение по-умолчанию."""
@@ -31,7 +37,7 @@ class Property(with_metaclass(ABCMeta, object)):
 
     def execute(self):
         """Запрашивает значение свойства от пользователя и возвращает результат."""
-        return self._get_input_object().execute()
+        self._value = self._get_input_object().execute()
 
     def get_default(self):
         """Возвращает значение по-умолчанию."""
@@ -50,11 +56,44 @@ class Property(with_metaclass(ABCMeta, object)):
         """Возвращает валидатор или цепочку валидаторов."""
         return None
 
+    def get_value(self):
+        return self._value
+
+
+class Stringify(object):
+    """Конвертер свойств в строку."""
+
+    __slots__ = () # dict
+
+    @classmethod
+    def execute(cls, prop, callback):
+        assert isinstance(prop, Property)
+        return '{}={}'.format(prop.get_name(), callback(prop.get_value()))
+
+    @classmethod
+    def boolean(cls, prop):
+        return cls.execute(prop, lambda value: 'True' if value else 'False')
+
+    @classmethod
+    def list(cls, prop):
+        return cls.execute(prop, lambda value: '[{}]'.format(', '.join(value)))
+
+    @classmethod
+    def number(cls, prop):
+        return cls.execute(prop, lambda value: '{}'.format(value))
+
+    @classmethod
+    def string(cls, prop):
+        return cls.execute(prop, lambda value: '"{}"'.format(value))
+
 
 class NameProperty(Property):
     """Name of the package"""
 
     __slots__ = ()
+
+    def __str__(self):
+        return Stringify.list(self)
 
     def _get_default(self):
         return Path.basename(getcwd())
