@@ -92,9 +92,6 @@ class NameProperty(Property):
 
     __slots__ = ()
 
-    def __str__(self):
-        return Stringify.list(self)
-
     def _get_default(self):
         return Path.basename(getcwd())
 
