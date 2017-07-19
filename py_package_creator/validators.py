@@ -13,6 +13,15 @@ class ChainValidator(Validator):
         for validator in validators:
             self.add_validator(validator)
 
+    def __contains__(self, validator):
+        assert issubclass(validator, Validator)
+
+        for v in self.__validators:
+            if isinstance(v, validator):
+                return True
+
+        return False
+
     def add_validator(self, validator):
         if not isinstance(validator, Validator):
             raise RuntimeError('The passed argument is not a Validator')

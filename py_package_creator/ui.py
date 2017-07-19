@@ -15,7 +15,7 @@ from prompt_toolkit.keys import Keys
 from prompt_toolkit.styles import style_from_dict
 from pygments.token import Token
 
-from .validators import ChainValidator
+from .validators import ChainValidator, NotBlankValidator
 
 
 class Input(with_metaclass(ABCMeta, object)):
@@ -80,7 +80,15 @@ class Prompt(Input):
 
         manager = KeyBindingManager.for_prompt()
 
-        @manager.registry.add_binding(Keys.Enter, filter=Condition(lambda cli: cli.buffers[DEFAULT_BUFFER].text == ''))
+        def cond(cli):
+            buffer = cli.buffers[DEFAULT_BUFFER]
+
+            validator = buffer.validator
+            is_required = isinstance(validator, NotBlankValidator) or (isinstance(validator, ChainValidator) and NotBlankValidator in validator)
+
+            return not is_required and buffer.text == ''
+
+        @manager.registry.add_binding(Keys.Enter, filter=Condition(cond))
         def _(event):
             event.cli.buffers[DEFAULT_BUFFER].text = self.get_default()
             event.cli.set_return_value(self.get_default())

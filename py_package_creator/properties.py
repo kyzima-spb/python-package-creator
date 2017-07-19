@@ -37,6 +37,7 @@ class Property(with_metaclass(ABCMeta, object)):
 
     def execute(self):
         """Запрашивает значение свойства от пользователя и возвращает результат."""
+        print(self._get_input_object().get_validator())
         self._value = self._get_input_object().execute()
 
     def get_default(self):
@@ -98,6 +99,9 @@ class NameProperty(Property):
     def get_name(self):
         return 'name'
 
+    def get_validator(self):
+        return NotBlankValidator()
+
 
 class UrlProperty(Property):
     """Home page for the package."""
@@ -124,7 +128,7 @@ class UrlProperty(Property):
         return 'url'
 
     def get_validator(self):
-        if self.get_default() is None:
+        if not self.get_default():
             return NotBlankValidator(), UrlValidator()
         return UrlValidator()
 
