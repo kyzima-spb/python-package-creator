@@ -1,6 +1,7 @@
 # coding: utf-8
 
 from abc import ABCMeta, abstractmethod
+import getpass
 from os import getcwd, path as Path
 import re
 
@@ -139,7 +140,7 @@ class AuthorProperty(Property):
     __slots__ = ()
 
     def _get_default(self):
-        return get_config_property('user.name')
+        return get_config_property('user.name') or getpass.getuser()
 
     def get_name(self):
         return 'author'
