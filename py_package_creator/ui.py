@@ -86,7 +86,10 @@ class Prompt(Input):
             validator = buffer.validator
             is_required = isinstance(validator, NotBlankValidator) or (isinstance(validator, ChainValidator) and NotBlankValidator in validator)
 
-            return not is_required and buffer.text == ''
+            if buffer.text == '':
+                return not is_required or (is_required and self.get_default())
+
+            return False
 
         @manager.registry.add_binding(Keys.Enter, filter=Condition(cond))
         def _(event):
