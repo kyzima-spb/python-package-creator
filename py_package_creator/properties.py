@@ -38,7 +38,6 @@ class Property(with_metaclass(ABCMeta, object)):
 
     def execute(self):
         """Запрашивает значение свойства от пользователя и возвращает результат."""
-        print(self._get_input_object().get_validator())
         self._value = self._get_input_object().execute()
 
     def get_default(self):
@@ -170,3 +169,12 @@ class LicenseProperty(Property):
 
     def get_name(self):
         return 'license'
+
+
+class DescriptionProperty(Property):
+    """Short, summary description of the package"""
+
+    __slots__ = ()
+
+    def get_name(self):
+        return 'description'
