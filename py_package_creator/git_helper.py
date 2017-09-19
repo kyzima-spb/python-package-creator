@@ -44,6 +44,20 @@ class Repo(object):
         """Возвращает имя текущей ветки."""
         return self('rev-parse', '--abbrev-ref', 'HEAD')
 
+    def get_history(self, revision_range=None):
+        """Возвращает список коммитов."""
+
+        args = ['--oneline']
+
+        if revision_range:
+            args.append('..'.join(revision_range))
+
+        return [l.split() for l in self('log', *args).splitlines()]
+
+    def get_filenames_in_commit(self, short_hash):
+        """Возвращает список измененных файлов в указанном коммите."""
+        return self('diff-tree', '--no-commit-id', '--name-only', '-r', short_hash).splitlines()
+
     def get_remote_updates(self):
         """
         Возвращает изменения в удаленном репозитории, если таковые есть.
