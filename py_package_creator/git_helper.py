@@ -28,6 +28,11 @@ def call_git(cmd, *args, cwd=None):
         return None
 
 
+def clone_repo(url, folder):
+    """Клонирует удаленный репозиторий в указанную директорию."""
+    return call_git('clone', url, folder)
+
+
 def get_config_property(prop):
     """Возвращает значение указанного конфигурационного параметра репозитория."""
     return call_git('config', '--get', prop)
@@ -52,7 +57,7 @@ class Repo(object):
         if revision_range:
             args.append('..'.join(revision_range))
 
-        return [l.split() for l in self('log', *args).splitlines()]
+        return [l.split(' ', 1) for l in self('log', *args).splitlines()]
 
     def get_filenames_in_commit(self, short_hash):
         """Возвращает список измененных файлов в указанном коммите."""
@@ -72,14 +77,12 @@ class Repo(object):
         Второй список состоит из кортежей новых веток, где элемента кортежа это:
         - короткое название удаленного репозитория
         - имя ветки.
-
-        Если в удаленном репозитории нет изменений, то возвращается None.
         """
 
         response = self('fetch', '--dry-run')
 
         if not response:
-            return None
+            return [], []
 
         regexp_template = r'{}.+->\s+(.+)/(.+)'
 
