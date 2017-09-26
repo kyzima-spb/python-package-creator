@@ -12,6 +12,13 @@ setup(
     description="",
     packages=find_packages(),
     zip_safe=False,
+    install_requires=[
+        'appdirs>=1.4',
+        'opensource>=1.0',
+        'prompt-toolkit>=1.0',
+        'Pygments>=2.2',
+        'six>=1.10'
+    ],
     entry_points={
         'console_scripts': ['ppc=py_package_creator.command_line:ppc']
     }
